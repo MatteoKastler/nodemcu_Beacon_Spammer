@@ -18,11 +18,17 @@ void loop() {
 sendBeaconFrame("test");
 }
 
-/*void advancedSpam(char[] ssid, int number){
-  
+void advancedSpam(char[] ssid){
+  for(int i = 0; i < 32 - strlen(ssid); i ++)
+    if(random(3) % 2 == 0){
+    ssid += " ";
+    }else{
+      ssid += "\t";
+    }
+    sendBeaconFrame(ssid);
   
 }
-*/
+
 void sendBeaconFrame(char* ssid){
 
   int ssidLength = strlen(ssid);
@@ -62,30 +68,34 @@ void sendBeaconFrame(char* ssid){
       beacon[38 + ssidLength + i] = afterSSID[i];
   }
   
+  //channel feld setzen
   beacon[50 + ssidLength] = channel;
 
   //Sender Mac- adresse randomisieren
   for(int i = 10;i <= 15;i++){
       beacon[i] = beacon[i + 6] = random(256);
   }
+  
   //beacon,beacongröße,sequenznummern(true/false)
-    wifi_send_pkt_freedom(beacon, beaconSize, 0);
-    wifi_send_pkt_freedom(beacon, beaconSize, 0);
-    wifi_send_pkt_freedom(beacon, beaconSize, 0);
-    delay(1);
+    for(int i = 0; i < 3; i++){
+      wifi_send_pkt_freedom(beacon, beaconSize, 0);
+      delay(1);
+    }
 }
+
 void sendRandomBeacon(int length) {
   char ssid[length+1];
   randomString(length, ssid);
-  sendBeaconFrame (ssid);
+  sendBeaconFrame(ssid);
 }
 
 void randomString(int length, char* ssid) {
-  String alfa = "1234567890qwertyuiopasdfghjkklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM_";
+  String characters = "1234567890qwertyuiopasdfghjkklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM_";
   for(int i = 0; i < length; i++) {
     ssid[i] = alfa[random(65)];
   }
 }
+
 void rickRoll() {
   sendBeaconFrame("01 Never gonna give you up,");
   sendBeaconFrame("02 never gonna let you down");
@@ -96,4 +106,5 @@ void rickRoll() {
   sendBeaconFrame("07 Never gonna tell a lie");
   sendBeaconFrame("08  and hurt you");
 }
+
 
